@@ -37,10 +37,16 @@ public class BlankEggRenderer implements BlockEntityRenderer<DMRBlankEggBlockEnt
         blockEntity.renderProgress = Mth.lerp(0.5f, blockEntity.renderProgress, time);
         float renderProg = blockEntity.renderProgress / DMRBlankEggBlockEntity.MAX_RENDER_PROGRESS;
 
+        var modelData = model.getModelData(
+                blockEntity.getLevel(),
+                blockEntity.getBlockPos(),
+                blockEntity.getBlockState(),
+                blockEntity.getModelData());
+
         var renderTypeSet = model.getRenderTypes(
                 blockEntity.getBlockState(),
                 blockEntity.getLevel().random,
-                blockEntity.getModelData());
+                modelData);
         var renderType = RenderTypeHelper.getEntityRenderType(
                 renderTypeSet.isEmpty() ? net.minecraft.client.renderer.RenderType.solid() : renderTypeSet.asList().getFirst(),
                 true);
@@ -58,7 +64,7 @@ public class BlankEggRenderer implements BlockEntityRenderer<DMRBlankEggBlockEnt
                         1.0f,
                         i,
                         OverlayTexture.NO_OVERLAY,
-                        blockEntity.getModelData(),
+                        modelData,
                         renderType);
 
         if (blockEntity.getTargetBreedId() != null

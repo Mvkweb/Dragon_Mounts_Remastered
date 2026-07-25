@@ -48,10 +48,16 @@ public class DragonEggRenderer implements BlockEntityRenderer<DMREggBlockEntity>
         poseStack.rotateAround(Axis.XN.rotationDegrees(angle), 0, 0, 0);
         poseStack.translate(-0.5, 0, -0.5);
 
+        var modelData = model.getModelData(
+                blockEntity.getLevel(),
+                blockEntity.getBlockPos(),
+                blockEntity.getBlockState(),
+                blockEntity.getModelData());
+
         var renderTypeSet = model.getRenderTypes(
                 blockEntity.getBlockState(),
                 blockEntity.getLevel().random,
-                blockEntity.getModelData());
+                modelData);
         var renderType = RenderTypeHelper.getEntityRenderType(
                 renderTypeSet.isEmpty() ? net.minecraft.client.renderer.RenderType.solid() : renderTypeSet.asList().getFirst(),
                 true);
@@ -69,7 +75,7 @@ public class DragonEggRenderer implements BlockEntityRenderer<DMREggBlockEntity>
                         1.0f,
                         i,
                         OverlayTexture.NO_OVERLAY,
-                        blockEntity.getModelData(),
+                        modelData,
                         renderType);
         poseStack.popPose();
     }
