@@ -4,17 +4,17 @@
   "group": "dragon",
   "ingredients": [
     [
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "aether" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "amethyst" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "end" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "fire" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "forest" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "ghost" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "ice" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "lush" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "nether" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "sculk" } },
-      { "item": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "water" } }
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "aether" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "amethyst" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "end" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "fire" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "forest" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "ghost" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "ice" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "lush" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "nether" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "sculk" } },
+      { "type": "neoforge:components", "items": "dmr:dragon_egg", "components": { "dmr:dragon_breed": "water" } }
     ]
   ],
   "result": {
