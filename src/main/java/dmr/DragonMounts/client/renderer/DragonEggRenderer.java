@@ -36,12 +36,14 @@ public class DragonEggRenderer implements BlockEntityRenderer<DMREggBlockEntity>
         var model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockEntity.getBlockState());
 
         if (model instanceof DragonEggModel.Baked eggModel) {
-            var bakedModel = eggModel.models.getOrDefault(blockEntity.getBreedId(), Baked.FALLBACK.get());
+            var breedId = blockEntity.getBreedId();
+            var bakedModel = breedId != null ? eggModel.models.getOrDefault(breedId, Baked.FALLBACK.get()) : Baked.FALLBACK.get();
 
             poseStack.pushPose();
             var time = blockEntity.tickCount;
-            float hatchProgress =
-                    ((float) blockEntity.getHatchTime() / blockEntity.getBreed().getHatchTime());
+            var breed = blockEntity.getBreed();
+            int hatchTimeMax = breed != null ? breed.getHatchTime() : 1;
+            float hatchProgress = ((float) blockEntity.getHatchTime() / hatchTimeMax);
             float oscillationPeriod = 100;
             float angle = (float) Math.sin((time % oscillationPeriod) * ((2 * Math.PI) / oscillationPeriod))
                     * (2 + (5 * hatchProgress));
@@ -58,7 +60,7 @@ public class DragonEggRenderer implements BlockEntityRenderer<DMREggBlockEntity>
                             .getFirst(),
                     true);
 
-            if (blockEntity.getBreed() != null && blockEntity.getBreed() instanceof DragonHybridBreed hybridBreed) {
+            if (breed instanceof DragonHybridBreed hybridBreed) {
                 bakedModel = eggModel.models.getOrDefault(hybridBreed.parent1.getId(), Baked.FALLBACK.get());
             }
 
@@ -70,9 +72,9 @@ public class DragonEggRenderer implements BlockEntityRenderer<DMREggBlockEntity>
                             multiBufferSource.getBuffer(renderType),
                             blockEntity.getBlockState(),
                             Objects.requireNonNullElse(bakedModel, model),
-                            0,
-                            0,
-                            0,
+                            1.0f,
+                            1.0f,
+                            1.0f,
                             i,
                             OverlayTexture.NO_OVERLAY);
             poseStack.popPose();

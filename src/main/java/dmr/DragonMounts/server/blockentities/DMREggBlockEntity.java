@@ -82,9 +82,15 @@ public class DMREggBlockEntity extends BlockEntity {
         super.saveAdditional(pTag, registries);
 
         if (getBreedId() != null) pTag.putString(NBTConstants.BREED, getBreedId());
+        if (getVariantId() != null) pTag.putString("variantId", getVariantId());
 
         pTag.putInt("hatchTime", getHatchTime());
         pTag.putString("owner", getOwner() == null ? "" : getOwner());
+
+        pTag.putDouble("healthAttribute", getHealthAttribute());
+        pTag.putDouble("speedAttribute", getSpeedAttribute());
+        pTag.putDouble("damageAttribute", getDamageAttribute());
+        pTag.putDouble("maxScaleAttribute", getMaxScaleAttribute());
 
         if (getCustomName() != null) pTag.putString("name", Component.Serializer.toJson(customName, registries));
     }
@@ -93,8 +99,14 @@ public class DMREggBlockEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, Provider registries) {
         super.loadAdditional(tag, registries);
         setBreedId(tag.getString(NBTConstants.BREED));
+        if (tag.contains("variantId")) setVariantId(tag.getString("variantId"));
         setHatchTime(tag.getInt("hatchTime"));
         setOwner(tag.getString("owner"));
+
+        if (tag.contains("healthAttribute")) setHealthAttribute(tag.getDouble("healthAttribute"));
+        if (tag.contains("speedAttribute")) setSpeedAttribute(tag.getDouble("speedAttribute"));
+        if (tag.contains("damageAttribute")) setDamageAttribute(tag.getDouble("damageAttribute"));
+        if (tag.contains("maxScaleAttribute")) setMaxScaleAttribute(tag.getDouble("maxScaleAttribute"));
 
         var name = tag.getString("name");
         if (!name.isBlank()) setCustomName(Component.Serializer.fromJson(name, registries));
@@ -145,6 +157,7 @@ public class DMREggBlockEntity extends BlockEntity {
                     if (!pLevel.isClientSide) hatch((ServerLevel) pLevel, pPos);
                 } else {
                     hatchTime -= 1;
+                    setChanged();
 
                     var stage = Mth.clamp((maxHatchTime - hatchTime) / growthStage, 0, 3);
 

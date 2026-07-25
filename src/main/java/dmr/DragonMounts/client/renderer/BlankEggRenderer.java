@@ -57,9 +57,9 @@ public class BlankEggRenderer implements BlockEntityRenderer<DMRBlankEggBlockEnt
                             multiBufferSource.getBuffer(renderType),
                             blockEntity.getBlockState(),
                             Objects.requireNonNullElse(bakedModel, model),
-                            0,
-                            0,
-                            0,
+                            1.0f,
+                            1.0f,
+                            1.0f,
                             i,
                             OverlayTexture.NO_OVERLAY);
 
@@ -89,9 +89,9 @@ public class BlankEggRenderer implements BlockEntityRenderer<DMRBlankEggBlockEnt
                                 multiplyAlphaRenderTypeBuffer.getBuffer(secondRenderType),
                                 blockEntity.getBlockState(),
                                 Objects.requireNonNullElse(targetModel, model),
-                                0,
-                                0,
-                                0,
+                                1.0f,
+                                1.0f,
+                                1.0f,
                                 i,
                                 OverlayTexture.NO_OVERLAY);
 

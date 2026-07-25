@@ -112,6 +112,9 @@ public class DMREggBlock extends DragonEggBlock implements EntityBlock, SimpleWa
                     }
                 }
             }
+
+            e.setChanged();
+            pLevel.sendBlockUpdated(pPos, pState, pState, Block.UPDATE_ALL);
         }
     }
 
@@ -162,7 +165,12 @@ public class DMREggBlock extends DragonEggBlock implements EntityBlock, SimpleWa
             BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         if (!pState.getValue(HATCHING)) {
             if (!pLevel.isClientSide) {
-                pLevel.setBlock(pPos, pState.setValue(HATCHING, true), Block.UPDATE_ALL);
+                var newState = pState.setValue(HATCHING, true);
+                pLevel.setBlock(pPos, newState, Block.UPDATE_ALL);
+                pLevel.sendBlockUpdated(pPos, pState, newState, Block.UPDATE_ALL);
+                if (pLevel.getBlockEntity(pPos) instanceof DMREggBlockEntity e) {
+                    e.setChanged();
+                }
                 return InteractionResult.CONSUME;
             }
             return InteractionResult.SUCCESS;
