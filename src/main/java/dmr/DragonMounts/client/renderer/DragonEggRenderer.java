@@ -35,49 +35,42 @@ public class DragonEggRenderer implements BlockEntityRenderer<DMREggBlockEntity>
 
         var model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockEntity.getBlockState());
 
-        if (model instanceof DragonEggModel.Baked eggModel) {
-            var breedId = blockEntity.getBreedId();
-            var bakedModel = breedId != null ? eggModel.models.getOrDefault(breedId, Baked.FALLBACK.get()) : Baked.FALLBACK.get();
+        poseStack.pushPose();
+        var time = blockEntity.tickCount;
+        var breed = blockEntity.getBreed();
+        int hatchTimeMax = breed != null ? breed.getHatchTime() : 1;
+        float hatchProgress = ((float) blockEntity.getHatchTime() / hatchTimeMax);
+        float oscillationPeriod = 100;
+        float angle = (float) Math.sin((time % oscillationPeriod) * ((2 * Math.PI) / oscillationPeriod))
+                * (2 + (5 * hatchProgress));
 
-            poseStack.pushPose();
-            var time = blockEntity.tickCount;
-            var breed = blockEntity.getBreed();
-            int hatchTimeMax = breed != null ? breed.getHatchTime() : 1;
-            float hatchProgress = ((float) blockEntity.getHatchTime() / hatchTimeMax);
-            float oscillationPeriod = 100;
-            float angle = (float) Math.sin((time % oscillationPeriod) * ((2 * Math.PI) / oscillationPeriod))
-                    * (2 + (5 * hatchProgress));
+        poseStack.translate(0.5, 0, 0.5);
+        poseStack.rotateAround(Axis.XN.rotationDegrees(angle), 0, 0, 0);
+        poseStack.translate(-0.5, 0, -0.5);
 
-            poseStack.translate(0.5, 0, 0.5);
-            poseStack.rotateAround(Axis.XN.rotationDegrees(angle), 0, 0, 0);
-            poseStack.translate(-0.5, 0, -0.5);
-            var renderType = RenderTypeHelper.getEntityRenderType(
-                    model.getRenderTypes(
-                                    blockEntity.getBlockState(),
-                                    blockEntity.getLevel().random,
-                                    blockEntity.getModelData())
-                            .asList()
-                            .getFirst(),
-                    true);
+        var renderTypeSet = model.getRenderTypes(
+                blockEntity.getBlockState(),
+                blockEntity.getLevel().random,
+                blockEntity.getModelData());
+        var renderType = RenderTypeHelper.getEntityRenderType(
+                renderTypeSet.isEmpty() ? net.minecraft.client.renderer.RenderType.solid() : renderTypeSet.asList().getFirst(),
+                true);
 
-            if (breed instanceof DragonHybridBreed hybridBreed) {
-                bakedModel = eggModel.models.getOrDefault(hybridBreed.parent1.getId(), Baked.FALLBACK.get());
-            }
-
-            Minecraft.getInstance()
-                    .getBlockRenderer()
-                    .getModelRenderer()
-                    .renderModel(
-                            poseStack.last(),
-                            multiBufferSource.getBuffer(renderType),
-                            blockEntity.getBlockState(),
-                            Objects.requireNonNullElse(bakedModel, model),
-                            1.0f,
-                            1.0f,
-                            1.0f,
-                            i,
-                            OverlayTexture.NO_OVERLAY);
-            poseStack.popPose();
-        }
+        Minecraft.getInstance()
+                .getBlockRenderer()
+                .getModelRenderer()
+                .renderModel(
+                        poseStack.last(),
+                        multiBufferSource.getBuffer(renderType),
+                        blockEntity.getBlockState(),
+                        model,
+                        1.0f,
+                        1.0f,
+                        1.0f,
+                        i,
+                        OverlayTexture.NO_OVERLAY,
+                        blockEntity.getModelData(),
+                        renderType);
+        poseStack.popPose();
     }
 }

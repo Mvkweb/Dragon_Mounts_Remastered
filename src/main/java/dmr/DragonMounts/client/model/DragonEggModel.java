@@ -67,8 +67,8 @@ public class DragonEggModel implements IUnbakedGeometry<DragonEggModel> {
         return new Baked(baked.build(), overrides);
     }
 
-    private record Data(String breedId, String variantId) {
-        private static final ModelProperty<Data> PROPERTY = new ModelProperty<>();
+    public record Data(String breedId, String variantId) {
+        public static final ModelProperty<Data> PROPERTY = new ModelProperty<>();
     }
 
     public static class Baked implements IDynamicBakedModel {

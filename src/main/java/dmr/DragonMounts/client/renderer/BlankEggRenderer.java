@@ -32,74 +32,72 @@ public class BlankEggRenderer implements BlockEntityRenderer<DMRBlankEggBlockEnt
             int i1) {
         var model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockEntity.getBlockState());
 
-        if (model instanceof Baked eggModel) {
-            var bakedModel = eggModel.models.getOrDefault("blank", Baked.FALLBACK.get());
+        poseStack.pushPose();
+        var time = blockEntity.getChangeTime();
+        blockEntity.renderProgress = Mth.lerp(0.5f, blockEntity.renderProgress, time);
+        float renderProg = blockEntity.renderProgress / DMRBlankEggBlockEntity.MAX_RENDER_PROGRESS;
+
+        var renderTypeSet = model.getRenderTypes(
+                blockEntity.getBlockState(),
+                blockEntity.getLevel().random,
+                blockEntity.getModelData());
+        var renderType = RenderTypeHelper.getEntityRenderType(
+                renderTypeSet.isEmpty() ? net.minecraft.client.renderer.RenderType.solid() : renderTypeSet.asList().getFirst(),
+                true);
+
+        Minecraft.getInstance()
+                .getBlockRenderer()
+                .getModelRenderer()
+                .renderModel(
+                        poseStack.last(),
+                        multiBufferSource.getBuffer(renderType),
+                        blockEntity.getBlockState(),
+                        model,
+                        1.0f,
+                        1.0f,
+                        1.0f,
+                        i,
+                        OverlayTexture.NO_OVERLAY,
+                        blockEntity.getModelData(),
+                        renderType);
+
+        if (blockEntity.getTargetBreedId() != null
+                && !blockEntity.getTargetBreedId().isEmpty()) {
+            
+            var targetModelData = blockEntity.getModelData().derive().with(dmr.DragonMounts.client.model.DragonEggModel.Data.PROPERTY, new dmr.DragonMounts.client.model.DragonEggModel.Data(blockEntity.getTargetBreedId(), null)).build();
 
             poseStack.pushPose();
-            var time = blockEntity.getChangeTime();
-            blockEntity.renderProgress = Mth.lerp(0.5f, blockEntity.renderProgress, time);
-            float renderProg = blockEntity.renderProgress / DMRBlankEggBlockEntity.MAX_RENDER_PROGRESS;
-
-            var renderType = RenderTypeHelper.getEntityRenderType(
-                    model.getRenderTypes(
-                                    blockEntity.getBlockState(),
-                                    blockEntity.getLevel().random,
-                                    blockEntity.getModelData())
-                            .asList()
-                            .getFirst(),
+            var secondRenderTypeSet = model.getRenderTypes(
+                    blockEntity.getBlockState(),
+                    blockEntity.getLevel().random,
+                    targetModelData);
+            var secondRenderType = RenderTypeHelper.getEntityRenderType(
+                    secondRenderTypeSet.isEmpty() ? net.minecraft.client.renderer.RenderType.solid() : secondRenderTypeSet.asList().getFirst(),
                     true);
+
+            MultiplyAlphaRenderTypeBuffer multiplyAlphaRenderTypeBuffer =
+                    new MultiplyAlphaRenderTypeBuffer(multiBufferSource, renderProg);
 
             Minecraft.getInstance()
                     .getBlockRenderer()
                     .getModelRenderer()
                     .renderModel(
                             poseStack.last(),
-                            multiBufferSource.getBuffer(renderType),
+                            multiplyAlphaRenderTypeBuffer.getBuffer(secondRenderType),
                             blockEntity.getBlockState(),
-                            Objects.requireNonNullElse(bakedModel, model),
+                            model,
                             1.0f,
                             1.0f,
                             1.0f,
                             i,
-                            OverlayTexture.NO_OVERLAY);
-
-            if (blockEntity.getTargetBreedId() != null
-                    && !blockEntity.getTargetBreedId().isEmpty()) {
-                var targetModel = eggModel.models.getOrDefault(blockEntity.getTargetBreedId(), Baked.FALLBACK.get());
-
-                poseStack.pushPose();
-                var secondRenderType = RenderTypeHelper.getEntityRenderType(
-                        targetModel
-                                .getRenderTypes(
-                                        blockEntity.getBlockState(),
-                                        blockEntity.getLevel().random,
-                                        blockEntity.getModelData())
-                                .asList()
-                                .getFirst(),
-                        true);
-
-                MultiplyAlphaRenderTypeBuffer multiplyAlphaRenderTypeBuffer =
-                        new MultiplyAlphaRenderTypeBuffer(multiBufferSource, renderProg);
-
-                Minecraft.getInstance()
-                        .getBlockRenderer()
-                        .getModelRenderer()
-                        .renderModel(
-                                poseStack.last(),
-                                multiplyAlphaRenderTypeBuffer.getBuffer(secondRenderType),
-                                blockEntity.getBlockState(),
-                                Objects.requireNonNullElse(targetModel, model),
-                                1.0f,
-                                1.0f,
-                                1.0f,
-                                i,
-                                OverlayTexture.NO_OVERLAY);
-
-                poseStack.popPose();
-            }
+                            OverlayTexture.NO_OVERLAY,
+                            targetModelData,
+                            secondRenderType);
 
             poseStack.popPose();
         }
+
+        poseStack.popPose();
     }
 
     public static class MultiplyAlphaRenderTypeBuffer implements MultiBufferSource {
