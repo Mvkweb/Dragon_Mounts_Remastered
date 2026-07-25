@@ -54,11 +54,18 @@ public class DMRRecipeProvider extends RecipeProvider {
             pRecipeOutput.accept(pId, shapedrecipe, null);
         }
 
+        var breeds = List.of("aether", "amethyst", "end", "fire", "forest", "ghost", "ice", "lush", "nether", "sculk", "water");
+        var eggStacks = breeds.stream().map(breed -> {
+            ItemStack stack = new ItemStack(ModItems.DRAGON_EGG_BLOCK_ITEM.get());
+            stack.set(dmr.DragonMounts.registry.ModComponents.DRAGON_BREED, breed);
+            return stack;
+        }).toArray(ItemStack[]::new);
+
         ShapelessRecipe shapelessrecipe = new ShapelessRecipe(
                 "dragon",
                 RecipeBuilder.determineBookCategory(RecipeCategory.MISC),
                 new ItemStack(ModItems.BLANK_EGG_BLOCK_ITEM.get()),
-                NonNullList.of(Ingredient.EMPTY, Ingredient.of(ModBlocks.DRAGON_EGG_BLOCK.get())));
+                NonNullList.of(Ingredient.EMPTY, Ingredient.of(eggStacks)));
 
         pRecipeOutput.accept(DMR.id("blank_egg"), shapelessrecipe, null);
     }
